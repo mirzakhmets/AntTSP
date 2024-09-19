@@ -8,6 +8,8 @@
 
 #include <ctime>
 
+#include <windows.h>
+
 using namespace std;
 const int max_n = 4000;
 const int max_ant = 2000;
@@ -78,7 +80,61 @@ class Ant {
 		t_len += len[path[path.size() - 2]][path[path.size() - 1]];
 	}
 };
+
+
+bool IsRegistered() {
+	DWORD value = -1;
+	DWORD valueSize = sizeof(value);
+	
+	if (RegGetValue (HKEY_CURRENT_USER, "Software\\OVG-Developers", "Registered", REG_DWORD, NULL, &value, &valueSize) == ERROR_SUCCESS) {
+		return true;
+	}
+	
+	return value != -1;
+}
+
+void CheckRuns() {
+	DWORD value = -1;
+	DWORD valueSize = sizeof(value);
+	DWORD valueType = REG_DWORD;
+	
+	HKEY hKey;
+	DWORD dwDisposition;
+	
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\OVG-Developers", 0, NULL, 0, 0, NULL, &hKey, &dwDisposition);
+	
+	if(ERROR_SUCCESS != RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\OVG-Developers", 0, KEY_SET_VALUE, &hKey)) 
+	{
+	}
+	
+	RegGetValue(HKEY_CURRENT_USER, "Software\\OVG-Developers", "Runs", REG_DWORD, NULL, &value, &valueSize);
+
+	RegCloseKey(hKey);
+	
+	value = value + 1;
+	
+	if (value > 10) {
+		puts ("Number of runs expired. Please purchase the program (visit site https://ovg-developers.mystrikingly.com/).");
+		
+		exit(0);
+	}
+	
+	valueSize = sizeof(value);
+	
+	DWORD dwValue = (DWORD) value;	
+	
+	RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\OVG-Developers", 0, KEY_SET_VALUE, &hKey);
+	
+	RegSetValueEx(hKey, "Runs", 0, REG_DWORD, (const BYTE*) &dwValue, sizeof (dwValue));
+	
+	RegCloseKey(hKey);
+}
+
 int main(int argc, char ** argv) {
+	if (!IsRegistered()) {
+		CheckRuns();
+	}
+	
 	scanf("%d %d %d", & n, & m, & nc);
 	for(int i = 0; i < n; ++i)
 		for(int j = 0; j < n; ++j) {
