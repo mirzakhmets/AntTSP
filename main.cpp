@@ -8,7 +8,9 @@
 
 #include <ctime>
 
+#ifdef TRIAL
 #include <windows.h>
+#endif
 
 using namespace std;
 const int max_n = 4000;
@@ -81,7 +83,7 @@ class Ant {
 	}
 };
 
-
+#ifdef TRIAL
 bool IsRegistered() {
 	DWORD value = -1;
 	DWORD valueSize = sizeof(value);
@@ -129,11 +131,14 @@ void CheckRuns() {
 	
 	RegCloseKey(hKey);
 }
+#endif
 
 int main(int argc, char ** argv) {
+#ifdef TRIAL
 	if (!IsRegistered()) {
 		CheckRuns();
 	}
+#endif
 	
 	scanf("%d %d %d", & n, & m, & nc);
 	for(int i = 0; i < n; ++i)
