@@ -8,6 +8,8 @@
 
 #include <ctime>
 
+#define TRIAL
+
 #ifdef TRIAL
 #include <windows.h>
 #endif
@@ -115,7 +117,7 @@ void CheckRuns() {
 	
 	value = value + 1;
 	
-	if (value > 10) {
+	if (value > 30) {
 		puts ("Number of runs expired. Please purchase the program (visit site https://ovg-developers.mystrikingly.com/).");
 		
 		exit(0);
